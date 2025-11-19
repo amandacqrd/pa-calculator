@@ -54,7 +54,7 @@
 <body class="bg-slate-100 dark:bg-slate-900 py-8 px-4 min-h-screen">
 
     <!-- Wrapper principal centralizado -->
-    <div class="w-full max-w-lg mx-auto">
+    <div class="w-full max-w-4xl mx-auto">
 
         <!-- TÍTULO PRINCIPAL -->
         <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-8 text-center">
@@ -93,6 +93,8 @@
                 <div class="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-lg">
                     <button id="modeFullOrder" class="flex-1 py-2 text-sm font-semibold rounded-md shadow-sm bg-white dark:bg-slate-600 text-slate-800 dark:text-white transition-all">Pedido Completo</button>
                     <button id="modeItems" class="flex-1 py-2 text-sm font-semibold rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all">Itens Específicos</button>
+                    <!-- Botão para Modo Descoberta -->
+                    <button id="modeDiscovery" class="flex-1 py-2 text-sm font-semibold rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all">Descobrir Desconto</button>
                 </div>
 
                 <!-- MODO 1: Valor Original Total (Pedido Completo) -->
@@ -118,9 +120,8 @@
                             <!-- Conteúdo do Tooltip (Imagem) -->
                             <div class="tooltip-content hidden absolute right-0 top-6 z-50 w-72 p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-xl">
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">O SKU é o código numérico abaixo do nome do produto:</p>
-                                <!-- ATENÇÃO: Salve a imagem do usuário como 'sku_exemplo.png' na mesma pasta -->
                                 <img src="sku_exemplo.png" alt="Exemplo de SKU" class="w-full rounded border border-slate-100" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                <div class="hidden text-xs text-red-500 mt-1 bg-red-50 p-2 rounded">Imagem 'sku_exemplo.png' não encontrada. Salve a imagem na mesma pasta.</div>
+                                <div class="hidden text-xs text-red-500 mt-1 bg-red-50 p-2 rounded">Imagem 'sku_exemplo.png' não encontrada.</div>
                             </div>
                         </div>
                     </div>
@@ -135,8 +136,33 @@
                     </div>
                 </div>
 
+                <!-- MODO 3: Descobrir Desconto (Cálculo Reverso) -->
+                <div id="discoverySection" class="hidden space-y-4 bg-amber-50 dark:bg-amber-900/10 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <h3 class="text-sm font-bold text-amber-800 dark:text-amber-200">Descobrir Desconto Aplicado</h3>
+                    
+                    <!-- Validação de Pedido Todo -->
+                    <div class="flex items-center mb-3">
+                        <input id="discoveryIsFullOrder" type="checkbox" class="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded">
+                        <label for="discoveryIsFullOrder" class="ml-2 block text-sm text-amber-900 dark:text-amber-100 font-medium">
+                            O desconto é no pedido todo?
+                        </label>
+                    </div>
+
+                    <div id="discoveryInputsContainer" class="space-y-3">
+                        <!-- Itens de descoberta serão adicionados aqui -->
+                    </div>
+
+                    <button id="addDiscoveryItemBtn" type="button" class="w-full py-2 border-2 border-dashed border-amber-300 dark:border-amber-700 rounded-lg text-sm font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-slate-700 transition-all">+ Adicionar Item para Análise</button>
+                    
+                    <div id="discoveryResult" class="hidden p-3 bg-white dark:bg-slate-800 rounded border border-amber-300 text-center shadow-sm">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Desconto Médio Encontrado:</p>
+                        <p id="discoveryPercentage" class="text-2xl font-bold text-amber-600 dark:text-amber-400">0%</p>
+                        <p class="text-xs text-slate-400 mt-1">Este valor foi aplicado no campo "Desconto Anterior".</p>
+                    </div>
+                </div>
+
                 <!-- Opções de Desconto Anterior -->
-                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                <div class="pt-2 border-t border-slate-200 dark:border-slate-700" id="discountOptionsContainer">
                     <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Desconto Anterior do Cliente</span>
                     <div id="discountOptions" class="grid grid-cols-3 sm:grid-cols-3 gap-3">
                         <!-- Linha 1 -->
@@ -157,7 +183,7 @@
                     <div class="flex items-center gap-3 mt-4">
                         <input type="radio" name="previousDiscount" id="dOther" value="other" class="hidden peer">
                         <label for="dOther" class="block text-center py-2 px-4 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg cursor-pointer peer-checked:bg-blue-600 peer-checked:text-white font-semibold transition-all">Outro</label>
-                        <input type="number" id="otherDiscountValue" placeholder="Valor %" class="flex-1 w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus-ring-blue-500 transition-all" disabled>
+                        <input type="number" id="otherDiscountValue" placeholder="Valor %" class="flex-1 w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus-ring-blue-500 transition-all" step="0.01" disabled>
                     </div>
                 </div>
 
@@ -244,7 +270,7 @@
         </div>
     </div>
 
-    <!-- Seção do Calendário de Promoções (Card Branco) -->
+    <!-- Seção do Calendário de Promoções -->
     <div id="calendarSection" class="w-full max-w-7xl mx-auto mt-8 px-4 pb-12">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6">
             <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
@@ -269,218 +295,11 @@
                             <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
                         </div>
 
-                        <!-- CALENDÁRIO US -->
-                        <div id="calendarUS" class="opacity-100 transition-opacity duration-300">
-                            <div class="grid grid-cols-7 gap-1">
-                                <!-- Dias Vazios/Anteriores - Altura Fixa h-32 -->
-                                <div class="bg-slate-50 dark:bg-slate-700/50 p-1 rounded h-32 text-xs text-slate-400">16</div>
-                                <!-- Dias Reais - Altura Fixa h-32 -->
-                                <div data-date="2025-11-17" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">17</span></div>
-                                <div data-date="2025-11-18" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">18</span></div>
-                                
-                                <!-- FASE 1 US -->
-                                <div data-date="2025-11-19" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring e High Summer" 
-                                     data-status="Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">19</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (US)<br>50% OFF SUPER SALE</div>
-                                </div>
-                                <div data-date="2025-11-20" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring e High Summer" 
-                                     data-status="Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">20</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (US)<br>50% OFF SUPER SALE</div>
-                                </div>
-                                <div data-date="2025-11-21" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring, High, Recompra + Fall (baixo giro)" 
-                                     data-status="Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">21</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (US)<br>50% OFF SUPER SALE</div>
-                                </div>
-                                <div data-date="2025-11-22" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring, High, Recompra + Fall (baixo giro)" 
-                                     data-status="Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">22</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (US)<br>50% OFF SUPER SALE</div>
-                                </div>
-                                
-                                <!-- FASE 2 US -->
-                                <div data-date="2025-11-23" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Sale (Spring, High, Recompra) + Fall (restante)" 
-                                     data-status="Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">23</span><div class="h-2 w-2 rounded-full bg-orange-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-orange-600 dark:text-orange-400 text-left leading-tight">FASE 2 (US)<br>50% SUPER SALE + 30% Full Price</div>
-                                </div>
-                                <div data-date="2025-11-24" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Sale (Spring, High, Recompra) + Fall (restante)" 
-                                     data-status="Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">24</span><div class="h-2 w-2 rounded-full bg-orange-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-orange-600 dark:text-orange-400 text-left leading-tight">FASE 2 (US)<br>50% SUPER SALE + 30% Full Price</div>
-                                </div>
-                                <div data-date="2025-11-25" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Sale (Spring, High, Recompra) + Fall (restante)" 
-                                     data-status="Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">25</span><div class="h-2 w-2 rounded-full bg-orange-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-orange-600 dark:text-orange-400 text-left leading-tight">FASE 2 (US)<br>50% SUPER SALE + 30% Full Price</div>
-                                </div>
-                                <div data-date="2025-11-26" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Sale (Spring, High, Recompra) + Fall (restante)" 
-                                     data-status="Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis." 
-                                     data-disclaimer="50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">26</span><div class="h-2 w-2 rounded-full bg-orange-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-orange-600 dark:text-orange-400 text-left leading-tight">FASE 2 (US)<br>50% SUPER SALE + 30% Full Price</div>
-                                </div>
+                        <!-- CALENDÁRIO US (Renderizado via JS) -->
+                        <div id="calendarUS" class="opacity-100 transition-opacity duration-300"></div>
 
-                                <!-- FASE 3 US -->
-                                <div data-date="2025-11-27" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Site todo (Exceções: New In, Collabs & Accessories)" 
-                                     data-status="TUDO FINAL SALE" 
-                                     data-disclaimer="50% off sitewide valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative. *Excludes New In, Collabs & Accessories.">
-                                    <span class="font-bold text-slate-700 text-sm">27</span><div class="h-2 w-2 rounded-full bg-blue-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-blue-600 dark:text-blue-400 text-left leading-tight">FASE 3 (US)<br>50% OFF SITEWIDE</div>
-                                </div>
-                                <div data-date="2025-11-28" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Site todo (Exceções: New In, Collabs & Accessories)" 
-                                     data-status="TUDO FINAL SALE. Descontos extra aplicados via cupom (SUPER10/SUPER20) ou reloginho (timer)." 
-                                     data-disclaimer="50% off sitewide with an extra 10% off using SUPER10 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative. 50% off sitewide with an extra 20% off using SUPER20 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">28</span><div class="h-2 w-2 rounded-full bg-blue-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-blue-600 dark:text-blue-400 text-left leading-tight">FASE 3 (US)<br>50% + 10%/20% Extra</div>
-                                </div>
-                                <div data-date="2025-11-29" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Site todo (Exceções: New In, Collabs & Accessories)" 
-                                     data-status="TUDO FINAL SALE. Desconto extra aplicado via cupom (SUPER10) ou reloginho (timer)." 
-                                     data-disclaimer="50% off sitewide with an extra 10% off using SUPER10 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">29</span><div class="h-2 w-2 rounded-full bg-blue-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-blue-600 dark:text-blue-400 text-left leading-tight">FASE 3 (US)<br>50% + 10% Extra</div>
-                                </div>
-                                <div data-date="2025-11-30" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Site todo (Exceções: New In, Collabs & Accessories)" 
-                                     data-status="TUDO FINAL SALE. Desconto extra aplicado via cupom (SUPER10) ou reloginho (timer)." 
-                                     data-disclaimer="50% off sitewide with an extra 10% off using SUPER10 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">30</span><div class="h-2 w-2 rounded-full bg-blue-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-blue-600 dark:text-blue-400 text-left leading-tight">FASE 3 (US)<br>50% + 10% Extra</div>
-                                </div>
-
-                                <!-- FASE 4 US -->
-                                <div data-date="2025-12-01" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Toda a Sale" 
-                                     data-status="TUDO FINAL SALE" 
-                                     data-disclaimer="70% off all sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">01</span><div class="h-2 w-2 rounded-full bg-purple-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-purple-600 dark:text-purple-400 text-left leading-tight">FASE 4 (US)<br>Super Monday<br>70% OFF Sale</div>
-                                </div>
-                                <div data-date="2025-12-02" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Toda a Sale" 
-                                     data-status="TUDO FINAL SALE" 
-                                     data-disclaimer="70% off all sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">02</span><div class="h-2 w-2 rounded-full bg-purple-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-purple-600 dark:text-purple-400 text-left leading-tight">FASE 4 (US)<br>Super Monday<br>70% OFF Sale</div>
-                                </div>
-                                <div data-date="2025-12-03" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 text-sm">03</span></div>
-                                <div data-date="2025-12-04" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 text-sm">04</span></div>
-                                <div data-date="2025-12-05" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 text-sm">05</span></div>
-                                <div data-date="2025-12-06" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 text-sm">06</span></div>
-                            </div>
-                        </div>
-
-                        <!-- CALENDÁRIO EU/UK (Hidden by default, toggled via JS class) -->
-                        <div id="calendarEU" class="hidden opacity-100 transition-opacity duration-300">
-                            <div class="grid grid-cols-7 gap-1">
-                                <!-- Dias Vazios/Anteriores - Altura Fixa h-32 -->
-                                <div class="bg-slate-50 dark:bg-slate-700/50 p-1 rounded h-32 text-xs text-slate-400">16</div>
-                                <div data-date="2025-11-17" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">17</span></div>
-                                <div data-date="2025-11-18" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">18</span></div>
-                                
-                                <!-- FASE 1 EU -->
-                                <div data-date="2025-11-19" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring e High Summer" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">19</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (EU/UK)<br>40% OFF Sale</div>
-                                </div>
-                                <div data-date="2025-11-20" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring e High Summer" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">20</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (EU/UK)<br>40% OFF Sale</div>
-                                </div>
-                                <div data-date="2025-11-21" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring e High Summer" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">21</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (EU/UK)<br>40% OFF Sale</div>
-                                </div>
-                                <div data-date="2025-11-22" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Spring e High Summer" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">22</span><div class="h-2 w-2 rounded-full bg-pink-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-pink-600 dark:text-pink-400 text-left leading-tight">FASE 1 (EU/UK)<br>40% OFF Sale</div>
-                                </div>
-                                
-                                <!-- FASE 2 EU -->
-                                <div data-date="2025-11-25" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Sale (Spring, High, Fall baixo) + Fall" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">25</span><div class="h-2 w-2 rounded-full bg-orange-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-orange-600 dark:text-orange-400 text-left leading-tight">FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price</div>
-                                </div>
-                                <div data-date="2025-11-26" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Sale + Fall" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">26</span><div class="h-2 w-2 rounded-full bg-orange-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-orange-600 dark:text-orange-400 text-left leading-tight">FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price</div>
-                                </div>
-                                <div data-date="2025-11-27" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Sale + Fall" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">27</span><div class="h-2 w-2 rounded-full bg-orange-500 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-orange-600 dark:text-orange-400 text-left leading-tight">FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price</div>
-                                </div>
-                                
-                                <!-- FASE 3 EU -->
-                                <div data-date="2025-11-28" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Site todo (Exceções: New In...)" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">28</span><div class="h-2 w-2 rounded-full bg-blue-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-blue-600 dark:text-blue-400 text-left leading-tight">FASE 3 (EU/UK)<br>40% OFF SITEWIDE</div>
-                                </div>
-                                <div data-date="2025-11-29" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Site todo" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">29</span><div class="h-2 w-2 rounded-full bg-blue-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-blue-600 dark:text-blue-400 text-left leading-tight">FASE 3 (EU/UK)<br>40% OFF SITEWIDE</div>
-                                </div>
-                                <div data-date="2025-11-30" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50" 
-                                     data-itens="Site todo" 
-                                     data-status="NÃO HÁ FINAL SALE" 
-                                     data-disclaimer="40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative.">
-                                    <span class="font-bold text-slate-700 text-sm">30</span><div class="h-2 w-2 rounded-full bg-blue-600 mx-auto mt-1"></div>
-                                    <div class="promo-info mt-1 text-xs font-bold text-blue-600 dark:text-blue-400 text-left leading-tight">FASE 3 (EU/UK)<br>40% OFF SITEWIDE</div>
-                                </div>
-                                <div data-date="2025-12-01" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">01</span></div>
-                                <div data-date="2025-12-02" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">02</span></div>
-                                <div data-date="2025-12-03" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">03</span></div>
-                                <div data-date="2025-12-04" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">04</span></div>
-                                <div data-date="2025-12-05" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">05</span></div>
-                                <div data-date="2025-12-06" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">06</span></div>
-                            </div>
-                        </div>
+                        <!-- CALENDÁRIO EU/UK (Renderizado via JS) -->
+                        <div id="calendarEU" class="hidden opacity-100 transition-opacity duration-300"></div>
                     </div>
                 </div>
 
@@ -513,22 +332,29 @@
         const otherDiscountValueEl = document.getElementById('otherDiscountValue');
         const copyReasonBtn = document.getElementById('copyReasonBtn');
         const copyFeedback = document.getElementById('copyFeedback');
-        // Novos Elementos para o Seletor de Modo
+        
         const modeFullOrderBtn = document.getElementById('modeFullOrder');
         const modeItemsBtn = document.getElementById('modeItems');
+        const modeDiscoveryBtn = document.getElementById('modeDiscovery');
         const fullOrderSection = document.getElementById('fullOrderSection');
         const itemsSection = document.getElementById('itemsSection');
+        const discoverySection = document.getElementById('discoverySection');
         const inclusionInputsContainer = document.getElementById('inclusionInputsContainer');
         const addInclusionItemBtn = document.getElementById('addInclusionItemBtn');
         const itemsTotalDisplay = document.getElementById('itemsTotalDisplay');
-        
-        let currentMode = 'full'; // 'full' ou 'items'
+        const discountOptionsContainer = document.getElementById('discountOptionsContainer');
 
-        // --- Elementos da DOM (Elegibilidade) ---
+        const discoveryIsFullOrder = document.getElementById('discoveryIsFullOrder');
+        const discoveryInputsContainer = document.getElementById('discoveryInputsContainer');
+        const addDiscoveryItemBtn = document.getElementById('addDiscoveryItemBtn');
+        const discoveryResult = document.getElementById('discoveryResult');
+        const discoveryPercentageEl = document.getElementById('discoveryPercentage');
+
+        let currentMode = 'full'; 
+
         const purchaseDateEl = document.getElementById('purchaseDate');
         const eligibilityResultEl = document.getElementById('eligibilityResult');
 
-        // --- Elementos da DOM (Calendário) ---
         const btnUS = document.getElementById('btnUS');
         const btnEU = document.getElementById('btnEU');
         const calendarUS = document.getElementById('calendarUS');
@@ -536,8 +362,6 @@
         const todayHighlightBox = document.getElementById('todayHighlightBox');
         const calendarSection = document.getElementById('calendarSection');
         const promoCheckLink = document.getElementById('promoCheckLink');
-
-        // --- Funções Utilitárias ---
 
         function cleanValue(value) {
             if (value == null) return '';
@@ -559,69 +383,84 @@
             errorMessageEl.textContent = '';
         }
 
-        // --- Lógica de Modos (Full Order vs Items) ---
-
         function switchMode(mode) {
             currentMode = mode;
-            clearAll(); // Limpa tudo ao trocar de modo para evitar conflitos
+            clearAll(); 
+            [modeFullOrderBtn, modeItemsBtn, modeDiscoveryBtn].forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-600', 'text-slate-800', 'dark:text-white', 'shadow-sm');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-700');
+            });
+            const activeBtn = mode === 'full' ? modeFullOrderBtn : (mode === 'items' ? modeItemsBtn : modeDiscoveryBtn);
+            activeBtn.classList.add('bg-white', 'dark:bg-slate-600', 'text-slate-800', 'dark:text-white', 'shadow-sm');
+            activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-700');
+            fullOrderSection.classList.add('hidden');
+            itemsSection.classList.add('hidden');
+            discoverySection.classList.add('hidden');
+            
+            if (mode === 'discovery') {
+                 discountOptionsContainer.classList.add('hidden');
+            } else {
+                 discountOptionsContainer.classList.remove('hidden');
+            }
 
             if (mode === 'full') {
-                // UI Updates
-                modeFullOrderBtn.classList.add('bg-white', 'dark:bg-slate-600', 'text-slate-800', 'dark:text-white', 'shadow-sm');
-                modeFullOrderBtn.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-700');
-                
-                modeItemsBtn.classList.remove('bg-white', 'dark:bg-slate-600', 'text-slate-800', 'dark:text-white', 'shadow-sm');
-                modeItemsBtn.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-700');
-                
-                // Section Visibility
                 fullOrderSection.classList.remove('hidden');
-                itemsSection.classList.add('hidden');
-            } else {
-                // UI Updates
-                modeItemsBtn.classList.add('bg-white', 'dark:bg-slate-600', 'text-slate-800', 'dark:text-white', 'shadow-sm');
-                modeItemsBtn.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-700');
-                
-                modeFullOrderBtn.classList.remove('bg-white', 'dark:bg-slate-600', 'text-slate-800', 'dark:text-white', 'shadow-sm');
-                modeFullOrderBtn.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-700');
-
-                // Section Visibility
+            } else if (mode === 'items') {
                 itemsSection.classList.remove('hidden');
-                fullOrderSection.classList.add('hidden');
-                
-                // Adiciona o primeiro campo se vazio
-                if (inclusionInputsContainer.querySelectorAll('.item-row').length === 0) {
-                    addInclusionItem();
-                }
+                if (inclusionInputsContainer.querySelectorAll('.item-row').length === 0) addInclusionItem();
+            } else {
+                discoverySection.classList.remove('hidden');
+                if (discoveryInputsContainer.querySelectorAll('.discovery-row').length === 0) addDiscoveryItem();
             }
         }
 
-        // --- Lógica de Inclusão de Itens (Modo 2) ---
+        function addDiscoveryItem() {
+            const row = document.createElement('div');
+            row.className = 'discovery-row flex items-center gap-2';
+            const isFullOrder = discoveryIsFullOrder.checked;
+            const skuDisplay = isFullOrder ? 'none' : 'block';
+
+            row.innerHTML = `
+                <input type="text" placeholder="SKU" class="item-sku w-32 sm:w-40 px-3 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500" style="display: ${skuDisplay};">
+                <input type="text" inputmode="decimal" placeholder="Original" class="item-original flex-1 px-3 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <input type="text" inputmode="decimal" placeholder="Pago" class="item-paid flex-1 px-3 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <button type="button" class="remove-discovery-btn w-8 h-8 flex-shrink-0 bg-red-100 text-red-700 rounded-full font-bold hover:bg-red-200 text-xs flex items-center justify-center">&times;</button>
+            `;
+            row.querySelector('.remove-discovery-btn').onclick = () => {
+                row.remove();
+            };
+            discoveryInputsContainer.appendChild(row);
+            if (skuDisplay === 'block') { row.querySelector('.item-sku').focus(); } else { row.querySelector('.item-original').focus(); }
+        }
+
+        function toggleDiscoverySkuField() {
+            const isFullOrder = discoveryIsFullOrder.checked;
+            const rows = discoveryInputsContainer.querySelectorAll('.discovery-row');
+            rows.forEach(row => {
+                const skuInput = row.querySelector('.item-sku');
+                skuInput.style.display = isFullOrder ? 'none' : 'block';
+            });
+        }
 
         function addInclusionItem() {
             const row = document.createElement('div');
             row.className = 'item-row flex items-center gap-2';
             row.innerHTML = `
-                <input type="text" placeholder="SKU" class="item-sku w-1/3 px-3 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <input type="text" placeholder="SKU" class="item-sku w-1/2 px-3 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
                 <input type="text" inputmode="decimal" placeholder="Valor (sem descontos)" class="item-value flex-1 px-3 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                <button type="button" class="remove-item-btn w-8 h-8 flex-shrink-0 bg-red-100 text-red-700 rounded-full font-bold hover:bg-red-200 text-sm">&times;</button>
+                <button type="button" class="remove-item-btn w-8 h-8 flex-shrink-0 bg-red-100 text-red-700 rounded-full font-bold hover:bg-red-200 text-sm flex items-center justify-center">&times;</button>
             `;
-
-            // Remove logic
             row.querySelector('.remove-item-btn').onclick = () => {
                 row.remove();
                 updateItemsTotal();
                 if (inclusionInputsContainer.querySelectorAll('.item-row').length === 0) {
-                    addInclusionItem(); // Mantém pelo menos 1
+                    addInclusionItem(); 
                 }
             };
-
-            // Update total logic
             const valInput = row.querySelector('.item-value');
             valInput.addEventListener('input', updateItemsTotal);
             valInput.addEventListener('keydown', (e) => { if(e.key==='Enter') calculateAdjustment() });
-
             inclusionInputsContainer.appendChild(row);
-            // Foca no SKU
             row.querySelector('.item-sku').focus();
         }
 
@@ -636,17 +475,28 @@
             return total;
         }
         
-        function getIncludedSkus() {
+        function getIncludedSkus(containerId) {
             const skus = [];
-            const rows = inclusionInputsContainer.querySelectorAll('.item-row');
-            rows.forEach(row => {
-                const sku = row.querySelector('.item-sku').value.trim();
-                if (sku) skus.push(sku);
-            });
+            const container = document.getElementById(containerId);
+            if (containerId === 'inclusionInputsContainer') {
+                const rows = container.querySelectorAll('.item-row');
+                rows.forEach(row => {
+                    const sku = row.querySelector('.item-sku').value.trim();
+                    if (sku) skus.push(sku);
+                });
+            } else if (containerId === 'discoveryInputsContainer') {
+                const rows = container.querySelectorAll('.discovery-row');
+                rows.forEach(row => {
+                    const skuInput = row.querySelector('.item-sku');
+                    if (skuInput && skuInput.style.display !== 'none') {
+                        const sku = skuInput.value.trim();
+                        if (sku) skus.push(sku);
+                    }
+                });
+            }
             return skus;
         }
 
-        // --- Map Previous Discount Value to Display Text ---
         function getPreviousDiscountText(val, otherVal) {
             if (val === "other") return otherVal + "%";
             switch(val) {
@@ -663,108 +513,180 @@
             }
         }
 
-
-        // --- Cálculo Principal ---
-
         function calculateAdjustment() {
             clearError();
             let originalValue = 0;
             let includedSkus = [];
 
-            // -- Lógica Baseada no Modo --
-            if (currentMode === 'full') {
-                // Modo 1: Valor Total (SEM EXCLUSÃO)
-                const rawVal = parseFloat(cleanValue(originalValueEl.value));
-                if (isNaN(rawVal) || rawVal <= 0) {
-                    showError('Por favor, insira um Valor Original válido.');
-                    return;
-                }
-                originalValue = rawVal;
-
-            } else {
-                // Modo 2: Soma dos Itens Específicos
-                // Valida SKUs
-                const skuInputs = inclusionInputsContainer.querySelectorAll('.item-sku');
-                let allSkusFilled = true;
-                skuInputs.forEach(input => {
-                    if (!input.value.trim()) allSkusFilled = false;
-                });
-                if (!allSkusFilled) {
-                    showError('Por favor, preencha o SKU de todos os itens.');
-                    return;
-                }
-
-                originalValue = updateItemsTotal();
-                if (originalValue <= 0) {
-                    showError('Por favor, adicione pelo menos um item com valor válido.');
-                    return;
-                }
-                includedSkus = getIncludedSkus();
-            }
-
-            // -- Lógica Comum de Descontos --
+            // Validações Comuns
             const basePromotion = parseFloat(currentPromotionEl.value); 
-            const selectedDiscountRadio = document.querySelector('input[name="previousDiscount"]:checked');
-
-            if (!selectedDiscountRadio) {
-                showError('Por favor, selecione o desconto anterior.');
-                return;
-            }
             if (isNaN(basePromotion) || basePromotion < 0) { 
                 showError('Por favor, insira uma promoção atual válida.');
                 return;
             }
-
-            let previousDiscountVal;
-            let previousDiscountText;
-            
-            if (selectedDiscountRadio.value === 'other') {
-                previousDiscountVal = parseFloat(otherDiscountValueEl.value);
-                if (isNaN(previousDiscountVal) || previousDiscountVal < 0) {
-                    showError('Por favor, insira um valor de desconto "Outro" válido.');
-                    return;
-                }
-                previousDiscountText = otherDiscountValueEl.value + "%";
-            } else {
-                previousDiscountVal = parseFloat(selectedDiscountRadio.value);
-                previousDiscountText = getPreviousDiscountText(selectedDiscountRadio.value, "");
-            }
-
             const basePromotionRate = basePromotion / 100;
             const extraDiscountRadio = document.querySelector('input[name="extraDiscount"]:checked');
             const extraPromotionRate = parseFloat(extraDiscountRadio.value); 
-            
             const currentPromotionRate = 1 - (1 - basePromotionRate) * (1 - extraPromotionRate);
-            const previousDiscountRate = previousDiscountVal / 100;
 
-            if (currentPromotionRate <= previousDiscountRate) {
-                showError('A promoção atual deve ser maior que o desconto anterior.');
+            if (currentMode === 'discovery') {
+                // --- MODO 3: CÁLCULO ABSOLUTO ---
+                let totalOriginal = 0;
+                let totalPaid = 0;
+                const rows = discoveryInputsContainer.querySelectorAll('.discovery-row');
+                rows.forEach(row => {
+                     const valOrg = parseFloat(cleanValue(row.querySelector('.item-original').value));
+                     const valPaid = parseFloat(cleanValue(row.querySelector('.item-paid').value));
+                     if (!isNaN(valOrg)) totalOriginal += valOrg;
+                     if (!isNaN(valPaid)) totalPaid += valPaid;
+                });
+
+                if (totalOriginal <= 0) {
+                     showError('Por favor, preencha os valores originais na lista de descoberta.');
+                     return;
+                }
+                
+                if (!discoveryIsFullOrder.checked) {
+                     const skuInputs = discoveryInputsContainer.querySelectorAll('.item-sku');
+                    let allSkusFilled = true;
+                    skuInputs.forEach(input => { 
+                         if (input.style.display !== 'none' && !input.value.trim()) allSkusFilled = false; 
+                    });
+                     if (!allSkusFilled) {
+                        showError('Por favor, preencha o SKU de todos os itens.');
+                        return;
+                    }
+                    includedSkus = getIncludedSkus('discoveryInputsContainer');
+                }
+
+                originalValue = totalOriginal;
+                const newValue = originalValue * (1 - currentPromotionRate);
+                const difference = totalPaid - newValue; // Diferença absoluta
+                
+                // Validação de Valor Negativo
+                if (difference < 0) {
+                    showError(`O cálculo resultou em valor negativo (${formatNumber(difference)}). A promoção atual parece ser pior ou igual ao que o cliente já pagou.`);
+                    return;
+                }
+
+                resultValueEl.textContent = formatNumber(difference);
+                resultArea.classList.remove('hidden');
+
+                // --- ADIÇÃO: Cálculo do desconto original para o texto de cópia ---
+                let impliedPct = 0;
+                if (totalOriginal > 0) impliedPct = (1 - (totalPaid / totalOriginal)) * 100;
+                
+                // Lista de descontos padrão dos botões para comparação
+                const stdDiscounts = [
+                    { v: 0, l: "0%" }, 
+                    { v: 15, l: "15%" }, 
+                    { v: 20, l: "20%" },
+                    { v: 30, l: "30%" }, 
+                    { v: 40, l: "40%" }, 
+                    { v: 44, l: "30+20%" }, // Aprox 44%
+                    { v: 50, l: "50%" }, 
+                    { v: 55, l: "50+10%" }, // Aprox 55%
+                    { v: 60, l: "50+20%" }  // Aprox 60%
+                ];
+                
+                // Tenta achar um padrão com margem de erro pequena (< 1%) ou usa aspas
+                let prevTxt = `"${Math.round(impliedPct)}%"`; 
+                const match = stdDiscounts.find(d => Math.abs(d.v - impliedPct) < 1.0);
+                if (match) prevTxt = match.l;
+                // ------------------------------------------------------------------
+
+                copyReasonBtn.dataset.mode = 'discovery';
+                copyReasonBtn.dataset.prev = prevTxt; // Agora passa o valor calculado
+                copyReasonBtn.dataset.base = basePromotion;
+                copyReasonBtn.dataset.extra = extraPromotionRate * 100;
+                copyReasonBtn.dataset.value = formatNumber(difference);
+                if (!discoveryIsFullOrder.checked) {
+                    copyReasonBtn.dataset.list = JSON.stringify(includedSkus);
+                } else {
+                    copyReasonBtn.dataset.list = "[]";
+                }
                 return;
-            }
 
-            const pricePaid = originalValue * (1 - previousDiscountRate);
-            const newPrice = originalValue * (1 - currentPromotionRate);
-            const difference = pricePaid - newPrice;
-
-            resultValueEl.textContent = formatNumber(difference);
-            resultArea.classList.remove('hidden');
-
-            // -- Preparar Dados para Cópia --
-            copyReasonBtn.dataset.mode = currentMode;
-            copyReasonBtn.dataset.prev = previousDiscountText;
-            copyReasonBtn.dataset.base = basePromotion;
-            copyReasonBtn.dataset.extra = extraPromotionRate * 100;
-            copyReasonBtn.dataset.value = formatNumber(difference);
-            
-            if (currentMode === 'items') {
-                copyReasonBtn.dataset.list = JSON.stringify(includedSkus);   // Lista de SKUs
             } else {
-                copyReasonBtn.dataset.list = "[]";
+                // --- MODOS 1 e 2: CÁLCULO PERCENTUAL ---
+                if (currentMode === 'full') {
+                    const rawVal = parseFloat(cleanValue(originalValueEl.value));
+                    if (isNaN(rawVal) || rawVal <= 0) {
+                        showError('Por favor, insira um Valor Original válido.');
+                        return;
+                    }
+                    originalValue = rawVal;
+                } else {
+                    // Modo Items
+                    const skuInputs = inclusionInputsContainer.querySelectorAll('.item-sku');
+                    let allSkusFilled = true;
+                    skuInputs.forEach(input => { if (!input.value.trim()) allSkusFilled = false; });
+                    if (!allSkusFilled) {
+                        showError('Por favor, preencha o SKU de todos os itens.');
+                        return;
+                    }
+                    originalValue = updateItemsTotal();
+                    if (originalValue <= 0) {
+                        showError('Por favor, adicione pelo menos um item com valor válido.');
+                        return;
+                    }
+                    includedSkus = getIncludedSkus('inclusionInputsContainer');
+                }
+
+                const selectedDiscountRadio = document.querySelector('input[name="previousDiscount"]:checked');
+                if (!selectedDiscountRadio) {
+                    showError('Por favor, selecione o desconto anterior.');
+                    return;
+                }
+
+                let previousDiscountVal;
+                let previousDiscountText;
+                if (selectedDiscountRadio.value === 'other') {
+                    previousDiscountVal = parseFloat(otherDiscountValueEl.value);
+                    if (isNaN(previousDiscountVal) || previousDiscountVal < 0) {
+                        showError('Por favor, insira um valor de desconto "Outro" válido.');
+                        return;
+                    }
+                    previousDiscountText = otherDiscountValueEl.value + "%";
+                } else {
+                    previousDiscountVal = parseFloat(selectedDiscountRadio.value);
+                    previousDiscountText = getPreviousDiscountText(selectedDiscountRadio.value, "");
+                }
+
+                const previousDiscountRate = previousDiscountVal / 100;
+
+                if (currentPromotionRate <= previousDiscountRate) {
+                    showError('A promoção atual deve ser maior que o desconto anterior.');
+                    return;
+                }
+
+                const pricePaid = originalValue * (1 - previousDiscountRate);
+                const newPrice = originalValue * (1 - currentPromotionRate);
+                const difference = pricePaid - newPrice;
+
+                // Validação de Valor Negativo (dupla checagem, embora o check de taxas acima já previna muito)
+                if (difference < 0) {
+                    showError(`O cálculo resultou em valor negativo (${formatNumber(difference)}). Verifique os descontos.`);
+                    return;
+                }
+
+                resultValueEl.textContent = formatNumber(difference);
+                resultArea.classList.remove('hidden');
+                
+                copyReasonBtn.dataset.mode = currentMode;
+                copyReasonBtn.dataset.prev = previousDiscountText;
+                copyReasonBtn.dataset.base = basePromotion;
+                copyReasonBtn.dataset.extra = extraPromotionRate * 100;
+                copyReasonBtn.dataset.value = formatNumber(difference);
+                if (currentMode === 'items') {
+                    copyReasonBtn.dataset.list = JSON.stringify(includedSkus);
+                } else {
+                    copyReasonBtn.dataset.list = "[]";
+                }
             }
         }
         
         function clearAll() {
-            // Limpa inputs comuns
             originalValueEl.value = '';
             currentPromotionEl.value = '50';
             const selectedDiscountRadio = document.querySelector('input[name="previousDiscount"]:checked');
@@ -772,23 +694,19 @@
             otherDiscountValueEl.value = '';
             otherDiscountValueEl.disabled = true;
             document.getElementById('extra0').checked = true;
-            
-            // Limpa Seção Items
             inclusionInputsContainer.innerHTML = '';
             if (currentMode === 'items') addInclusionItem();
             itemsTotalDisplay.textContent = '0.00';
-
-            // Limpa Resultados e Erros
+            discoveryInputsContainer.innerHTML = '';
+            if (currentMode === 'discovery') addDiscoveryItem();
+            discoveryResult.classList.add('hidden');
+            discoveryIsFullOrder.checked = false;
             resultArea.classList.add('hidden');
             clearError();
             copyFeedback.classList.add('hidden');
-            
-            // Limpa Elegibilidade
             purchaseDateEl.value = '';
             eligibilityResultEl.classList.add('hidden');
             eligibilityResultEl.innerHTML = '';
-
-            // Foca no input correto
             if (currentMode === 'full') originalValueEl.focus();
         }
 
@@ -799,29 +717,46 @@
             const extra = parseFloat(copyReasonBtn.dataset.extra);
             const value = copyReasonBtn.dataset.value;
             const listData = JSON.parse(copyReasonBtn.dataset.list || '[]');
+            let reasonText = "";
 
-            let reasonText = `PA from ${prevText} to ${base}%`;
+            // Unificado: Agora Discovery também tem prevText calculado
+            reasonText = `PA from ${prevText} to ${base}%`;
             
             if (extra > 0) {
-                reasonText += ` + ${extra}% extra`; // Removido parênteses
+                reasonText += ` + ${extra}% extra`;
             }
             
-            if (mode === 'items') {
-                // Modo Items: Mostra SKUs dos itens ajustados
+            const isSpecificItems = (mode === 'items') || (mode === 'discovery' && !discoveryIsFullOrder.checked);
+            
+            if (isSpecificItems) {
                 if (listData.length > 0) {
                     const skuStr = listData.join(', ');
-                    reasonText += ` | Adjusted Items: ${skuStr}`; // Removido parênteses
+                    reasonText += ` | Adjusted Items: ${skuStr}`;
                 } else {
                      reasonText += ` | Adjusted Items: Manual Selection`;
                 }
             } else {
-                 reasonText += ` | Applied to all items`; // Texto alterado
+                 reasonText += ` | Applied to all items`; 
             }
             
             reasonText += ` | Refund Amount: ${value}`;
 
+            // Tenta usar a API moderna primeiro
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(reasonText).then(() => {
+                    showCopyFeedback();
+                }).catch(err => {
+                    console.error('Erro Clipboard API, tentando fallback:', err);
+                    fallbackCopyText(reasonText);
+                });
+            } else {
+                fallbackCopyText(reasonText);
+            }
+        }
+
+        function fallbackCopyText(text) {
             const textArea = document.createElement("textarea");
-            textArea.value = reasonText;
+            textArea.value = text;
             textArea.style.position = "fixed"; 
             textArea.style.left = "-9999px";
             document.body.appendChild(textArea);
@@ -854,31 +789,114 @@
             }
         }
 
+        // --- Lógica de Dados e Renderização do Calendário (REFATORADO) ---
+        
+        // Configuração Geral dos dados do calendário
+        // Edite este objeto para alterar datas, cores e textos
+        const calendarData = {
+            us: {
+                "2025-11-19": { type: "phase1", info: "FASE 1 (US)<br>50% OFF SUPER SALE", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring e High Summer", status: "Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-11-20": { type: "phase1", info: "FASE 1 (US)<br>50% OFF SUPER SALE", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring e High Summer", status: "Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-11-21": { type: "phase1", info: "FASE 1 (US)<br>50% OFF SUPER SALE", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring, High, Recompra + Fall (baixo giro)", status: "Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-11-22": { type: "phase1", info: "FASE 1 (US)<br>50% OFF SUPER SALE", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring, High, Recompra + Fall (baixo giro)", status: "Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-11-23": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
+                "2025-11-24": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
+                "2025-11-25": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
+                "2025-11-26": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
+                "2025-11-27": { type: "phase3", info: "FASE 3 (US)<br>50% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In, Collabs & Accessories)", status: "TUDO FINAL SALE", disclaimer: "50% off sitewide valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative. *Excludes New In, Collabs & Accessories." },
+                "2025-11-28": { type: "phase3", info: "FASE 3 (US)<br>50% + 10%/20% Extra", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In, Collabs & Accessories)", status: "TUDO FINAL SALE. Descontos extra aplicados via cupom (SUPER10/SUPER20) ou reloginho (timer).", disclaimer: "50% off sitewide with an extra 10% off using SUPER10 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative. 50% off sitewide with an extra 20% off using SUPER20 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-11-29": { type: "phase3", info: "FASE 3 (US)<br>50% + 10% Extra", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In, Collabs & Accessories)", status: "TUDO FINAL SALE. Desconto extra aplicado via cupom (SUPER10) ou reloginho (timer).", disclaimer: "50% off sitewide with an extra 10% off using SUPER10 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-11-30": { type: "phase3", info: "FASE 3 (US)<br>50% + 10% Extra", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In, Collabs & Accessories)", status: "TUDO FINAL SALE. Desconto extra aplicado via cupom (SUPER10) ou reloginho (timer).", disclaimer: "50% off sitewide with an extra 10% off using SUPER10 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-12-01": { type: "phase4", info: "FASE 4 (US)<br>Super Monday<br>70% OFF Sale", dotColor: "bg-purple-600", textColor: "text-purple-600 dark:text-purple-400", itens: "Toda a Sale", status: "TUDO FINAL SALE", disclaimer: "70% off all sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+                "2025-12-02": { type: "phase4", info: "FASE 4 (US)<br>Super Monday<br>70% OFF Sale", dotColor: "bg-purple-600", textColor: "text-purple-600 dark:text-purple-400", itens: "Toda a Sale", status: "TUDO FINAL SALE", disclaimer: "70% off all sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
+            },
+            eu: {
+                 "2025-11-19": { type: "phase1", info: "FASE 1 (EU/UK)<br>40% OFF Sale", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring e High Summer", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-20": { type: "phase1", info: "FASE 1 (EU/UK)<br>40% OFF Sale", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring e High Summer", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-21": { type: "phase1", info: "FASE 1 (EU/UK)<br>40% OFF Sale", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring e High Summer", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-22": { type: "phase1", info: "FASE 1 (EU/UK)<br>40% OFF Sale", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring e High Summer", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-25": { type: "phase2", info: "FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Fall baixo) + Fall", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-26": { type: "phase2", info: "FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale + Fall", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-27": { type: "phase2", info: "FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale + Fall", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-28": { type: "phase3", info: "FASE 3 (EU/UK)<br>40% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In...)", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-29": { type: "phase3", info: "FASE 3 (EU/UK)<br>40% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-30": { type: "phase3", info: "FASE 3 (EU/UK)<br>40% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+            }
+        };
+
+        // Intervalo de dias para exibir no grid (De 16 Nov a 06 Dez)
+        const calendarDays = [
+            '2025-11-16', '2025-11-17', '2025-11-18', '2025-11-19', '2025-11-20', '2025-11-21', '2025-11-22',
+            '2025-11-23', '2025-11-24', '2025-11-25', '2025-11-26', '2025-11-27', '2025-11-28', '2025-11-29',
+            '2025-11-30', '2025-12-01', '2025-12-02', '2025-12-03', '2025-12-04', '2025-12-05', '2025-12-06'
+        ];
+
+        function renderCalendar(market) {
+            const container = market === 'us' ? calendarUS : calendarEU;
+            const dataSet = calendarData[market];
+            let html = '<div class="grid grid-cols-7 gap-1">';
+
+            calendarDays.forEach(dateStr => {
+                const parts = dateStr.split('-');
+                const dayNum = parts[2];
+                const data = dataSet[dateStr];
+
+                if (data) {
+                    // Dia com evento
+                    html += `
+                    <div data-date="${dateStr}" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50 transition-colors duration-150"
+                         data-itens="${data.itens}"
+                         data-status="${data.status}"
+                         data-disclaimer="${data.disclaimer}">
+                        <span class="font-bold text-slate-700 dark:text-slate-200 text-sm">${dayNum}</span>
+                        <div class="h-2 w-2 rounded-full ${data.dotColor} mx-auto mt-1"></div>
+                        <div class="promo-info mt-1 text-xs font-bold ${data.textColor} text-left leading-tight">${data.info}</div>
+                    </div>`;
+                } else if (dateStr === '2025-11-16') {
+                    // Dia inicial vazio/ghost
+                    html += `<div class="bg-slate-50 dark:bg-slate-700/50 p-1 rounded h-32 text-xs text-slate-400">${dayNum}</div>`;
+                } else {
+                    // Dia vazio normal
+                    html += `<div data-date="${dateStr}" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">${dayNum}</span></div>`;
+                }
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Inicializa os calendários
+        renderCalendar('us');
+        renderCalendar('eu');
+
         // --- Event Listeners ---
         modeFullOrderBtn.addEventListener('click', () => switchMode('full'));
         modeItemsBtn.addEventListener('click', () => switchMode('items'));
+        modeDiscoveryBtn.addEventListener('click', () => switchMode('discovery'));
         addInclusionItemBtn.addEventListener('click', addInclusionItem);
-        
+        addDiscoveryItemBtn.addEventListener('click', addDiscoveryItem);
+        discoveryIsFullOrder.addEventListener('change', toggleDiscoverySkuField);
         calculateBtn.addEventListener('click', calculateAdjustment);
         clearBtn.addEventListener('click', clearAll);
         document.getElementById('discountOptions').addEventListener('change', handleDiscountChange);
         document.querySelector('.flex.items-center.gap-3.mt-4').addEventListener('change', handleDiscountChange);
-        
         copyReasonBtn.addEventListener('click', copyReason);
-        
         originalValueEl.addEventListener('keydown', (e) => { if(e.key==='Enter') calculateAdjustment() });
-        
-        // --- (Resto dos listeners de Calendário/Elegibilidade mantidos iguais) ---
         promoCheckLink.addEventListener('click', goToTodayUS);
         purchaseDateEl.addEventListener('change', checkEligibility);
         btnUS.addEventListener('click', () => switchCalendar('us'));
         btnEU.addEventListener('click', () => switchCalendar('eu'));
-        calendarUS.addEventListener('click', handleDayClick);
-        calendarEU.addEventListener('click', handleDayClick);
+        
+        // Event Delegation para o calendário renderizado dinamicamente
+        calendarSection.addEventListener('click', (e) => {
+             if (e.target.closest('.calendar-day')) {
+                 handleDayClick(e);
+             }
+        });
+
         window.addEventListener('load', initialCalendarLoad);
 
-        // Funções de calendário (mantidas do código anterior, necessárias para funcionamento)
-        function checkEligibility() { /* Mesma lógica anterior */ 
+        function checkEligibility() { 
              const dateStr = purchaseDateEl.value;
             if (!dateStr) { eligibilityResultEl.classList.add('hidden'); return; }
             try {
@@ -901,7 +919,7 @@
             } catch (e) { eligibilityResultEl.classList.add('hidden'); }
         }
         function goToTodayUS(e) { e.preventDefault(); switchCalendar('us'); calendarSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-        function switchCalendar(market) { /* Mesma lógica anterior */
+        function switchCalendar(market) {
             if (market === 'us') {
                 btnUS.className = "flex-1 sm:flex-none py-2 px-5 rounded-lg font-semibold text-xs sm:text-sm transition-all bg-blue-600 text-white";
                 btnEU.className = "flex-1 sm:flex-none py-2 px-5 rounded-lg font-semibold text-xs sm:text-sm transition-all bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200";
@@ -915,7 +933,7 @@
             }
             showTodayHighlight(market);
         }
-        function updateHighlightBox(date, dayCell) { /* Mesma lógica anterior */ 
+        function updateHighlightBox(date, dayCell) { 
              const formattedDate = date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
             let promoTitleHtml = "";
             const promoEl = dayCell.querySelector('.promo-info');
@@ -931,7 +949,7 @@
             } else { detailsHtml = `<span class="text-sm text-blue-800 dark:text-blue-200">Sem promoção principal neste dia.</span>${avisoLink}`; }
             todayHighlightBox.innerHTML = `<h4 class="font-bold text-lg text-blue-900 dark:text-white capitalize">${formattedDate}</h4><p class="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-3">${promoTitleHtml}</p>${detailsHtml}`;
         }
-        function showTodayHighlight(marketToShow) { /* Mesma lógica anterior */
+        function showTodayHighlight(marketToShow) {
             const today = new Date();
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -948,7 +966,7 @@
                 todayHighlightBox.innerHTML = `<h4 class="font-bold text-lg text-blue-900 dark:text-white capitalize">${formattedDate}</h4><span class="text-sm text-blue-800 dark:text-blue-200">Sem promoção principal hoje.</span>`; 
             }
         }
-        function initialCalendarLoad() { /* Mesma lógica anterior */ 
+        function initialCalendarLoad() { 
              const today = new Date();
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -964,7 +982,7 @@
             }
             switchCalendar(calendarToShow);
         }
-        function handleDayClick(event) { /* Mesma lógica anterior */ 
+        function handleDayClick(event) { 
             const day = event.target.closest('.calendar-day');
             if (!day || day.classList.contains('bg-slate-50')) { return; }
             document.querySelectorAll('.calendar-day.highlight-today').forEach(cell => { cell.classList.remove('highlight-today'); });
@@ -978,4 +996,3 @@
     </script>
 </body>
 </html>
-```eof
