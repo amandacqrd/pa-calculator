@@ -528,9 +528,25 @@
         const calendarSection = document.getElementById('calendarSection');
         const promoCheckLink = document.getElementById('promoCheckLink');
 
+        // NOVA FUNÇÃO CLEANVALUE CORRIGIDA
         function cleanValue(value) {
             if (value == null) return '';
-            return String(value).replace(/,/g, '');
+            let str = String(value);
+            
+            // Se tiver virgula e ponto, assume formato BRL (1.000,00) ou US (1,000.00)
+            if (str.includes(',') && str.includes('.')) {
+                // Se o ponto vem antes, é BRL (remove ponto de milhar)
+                if (str.indexOf('.') < str.indexOf(',')) {
+                    str = str.replace(/\./g, '');
+                } else {
+                    // Se a virgula vem antes, é US (remove virgula de milhar)
+                    str = str.replace(/,/g, '');
+                }
+            }
+            
+            // Substitui qualquer vírgula restante por ponto (para decimal)
+            // Isso garante que 208,80 vire 208.80
+            return str.replace(/,/g, '.');
         }
 
         function formatNumber(value) {
