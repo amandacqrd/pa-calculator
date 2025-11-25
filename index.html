@@ -284,7 +284,25 @@
 
                 <!-- Opções de Desconto Extra -->
                 <div class="space-y-2 pt-2">
-                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Desconto Extra (Opcional):</span>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Desconto Extra (Opcional):</span>
+                        <!-- Link para visualizar cupom SPECIAL10 -->
+                        <div class="relative tooltip-container inline-block">
+                            <button type="button" class="flex items-center gap-1 text-xs font-bold text-green-600 dark:text-green-400 hover:text-green-700 focus:outline-none" onclick="openImageModal('image_00e039.jpg')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                Ver Cupom SPECIAL10
+                            </button>
+                            <div class="tooltip-content hidden absolute right-0 bottom-6 z-50 w-72 p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-xl cursor-pointer" onclick="openImageModal('image_00e039.jpg')">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Exemplo do cupom segmentado no site:</p>
+                                <img src="image_00e039.jpg" alt="Visual do Cupom SPECIAL10" class="w-full rounded border border-slate-100" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div class="hidden text-xs text-red-500 mt-1 bg-red-50 p-2 rounded">Imagem 'image_00e039.jpg' não encontrada.</div>
+                                <p class="text-[10px] text-blue-500 mt-1 text-center font-medium">(Clique para ampliar)</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="flex items-center gap-4">
                         <div class="flex items-center">
                             <input type="radio" id="extra0" name="extraDiscount" value="0" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" checked>
@@ -716,24 +734,24 @@
                 let totalPaid = 0;
                 const rows = discoveryInputsContainer.querySelectorAll('.discovery-row');
                 rows.forEach(row => {
-                     const valOrg = parseFloat(cleanValue(row.querySelector('.item-original').value));
-                     const valPaid = parseFloat(cleanValue(row.querySelector('.item-paid').value));
-                     if (!isNaN(valOrg)) totalOriginal += valOrg;
-                     if (!isNaN(valPaid)) totalPaid += valPaid;
+                      const valOrg = parseFloat(cleanValue(row.querySelector('.item-original').value));
+                      const valPaid = parseFloat(cleanValue(row.querySelector('.item-paid').value));
+                      if (!isNaN(valOrg)) totalOriginal += valOrg;
+                      if (!isNaN(valPaid)) totalPaid += valPaid;
                 });
 
                 if (totalOriginal <= 0) {
-                     showError('Por favor, preencha os valores originais na lista de descoberta.');
-                     return;
+                      showError('Por favor, preencha os valores originais na lista de descoberta.');
+                      return;
                 }
                 
                 if (!discoveryIsFullOrder.checked) {
-                     const skuInputs = discoveryInputsContainer.querySelectorAll('.item-sku');
+                      const skuInputs = discoveryInputsContainer.querySelectorAll('.item-sku');
                     let allSkusFilled = true;
                     skuInputs.forEach(input => { 
-                         if (input.style.display !== 'none' && !input.value.trim()) allSkusFilled = false; 
+                          if (input.style.display !== 'none' && !input.value.trim()) allSkusFilled = false; 
                     });
-                     if (!allSkusFilled) {
+                      if (!allSkusFilled) {
                         showError('Por favor, preencha o SKU de todos os itens.');
                         return;
                     }
@@ -914,7 +932,7 @@
                     const skuStr = listData.join(', ');
                     reasonText += ` | Adjusted Items: ${skuStr}`;
                 } else {
-                     reasonText += ` | Adjusted Items: Manual Selection`;
+                      reasonText += ` | Adjusted Items: Manual Selection`;
                 }
             } else {
                  reasonText += ` | Applied to all items`; 
@@ -981,8 +999,29 @@
                 "2025-11-21": { type: "phase1", info: "FASE 1 (US)<br>50% OFF SUPER SALE", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring, High, Recompra + Fall (baixo giro)", status: "Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
                 "2025-11-22": { type: "phase1", info: "FASE 1 (US)<br>50% OFF SUPER SALE", dotColor: "bg-pink-500", textColor: "text-pink-600 dark:text-pink-400", itens: "Spring, High, Recompra + Fall (baixo giro)", status: "Apenas itens da aba SALE são FINAL SALE. Itens Full Price são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
                 "2025-11-23": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
-                "2025-11-24": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
-                "2025-11-25": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
+                
+                // ATUALIZADO: Dia 24/11 - Info reduzida e detalhes no disclaimer
+                "2025-11-24": { 
+                    type: "phase2", 
+                    info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price + 10% Extra", 
+                    dotColor: "bg-orange-500", 
+                    textColor: "text-orange-600 dark:text-orange-400", 
+                    itens: "Sale (Spring, High, Recompra) + Fall (restante)", 
+                    status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", 
+                    disclaimer: "50% off sale styles + 30% off Fall styles. <br><br><strong class='text-green-600'>CUPOM EXTRA:</strong> 'SPECIAL10' (10% OFF) ativo para clientes selecionados (via pop-up). Válido para Sale, Final Sale e Full Price. Início às 17h30.<br><div class='flex gap-2 mt-2'><button class='text-blue-600 hover:underline text-xs font-bold bg-blue-50 px-2 py-1 rounded border border-blue-200' onclick='openImageModal(\"image_00e039.jpg\")'>[Ver Visual do Cupom]</button><a href='https://somagrupo-my.sharepoint.com/:x:/g/personal/betina_basto_farmrio_com/IQBZYHqQU7inTYaMcnOh4gnuAWrIizzoO4UzdhLHkS7mhN8?e=3aGu8c' target='_blank' class='text-blue-600 hover:underline text-xs font-bold bg-blue-50 px-2 py-1 rounded border border-blue-200'>[Ver Lista de Clientes]</a></div>" 
+                },
+                
+                // ATUALIZADO: Dia 25/11 - Info reduzida e detalhes no disclaimer
+                "2025-11-25": { 
+                    type: "phase2", 
+                    info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price + 10% Extra", 
+                    dotColor: "bg-orange-500", 
+                    textColor: "text-orange-600 dark:text-orange-400", 
+                    itens: "Sale (Spring, High, Recompra) + Fall (restante)", 
+                    status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", 
+                    disclaimer: "50% off sale styles + 30% off Fall styles. <br><br><strong class='text-red-600'>ATENÇÃO:</strong> Cupom 'SPECIAL10' (10% OFF para selecionados) expira às 10AM EST (12h Horário de Brasília).<br><div class='flex gap-2 mt-2'><button class='text-blue-600 hover:underline text-xs font-bold bg-blue-50 px-2 py-1 rounded border border-blue-200' onclick='openImageModal(\"image_00e039.jpg\")'>[Ver Visual do Cupom]</button><a href='https://somagrupo-my.sharepoint.com/:x:/g/personal/betina_basto_farmrio_com/IQBZYHqQU7inTYaMcnOh4gnuAWrIizzoO4UzdhLHkS7mhN8?e=3aGu8c' target='_blank' class='text-blue-600 hover:underline text-xs font-bold bg-blue-50 px-2 py-1 rounded border border-blue-200'>[Ver Lista de Clientes]</a></div>" 
+                },
+                
                 "2025-11-26": { type: "phase2", info: "FASE 2 (US)<br>50% SUPER SALE + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Recompra) + Fall (restante)", status: "Apenas itens da aba SALE (50% OFF) são FINAL SALE. Itens Full Price (30% OFF) são retornáveis.", disclaimer: "50% off sale styles valid on U.S. online orders for a limited time, all sales are final and cannot be returned. 30% off Fall styles valid on U.S. online orders for a limited time, and can be returned. Coupons are noncumulative." },
                 "2025-11-27": { type: "phase3", info: "FASE 3 (US)<br>50% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In, Collabs & Accessories)", status: "TUDO FINAL SALE", disclaimer: "50% off sitewide valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative. *Excludes New In, Collabs & Accessories." },
                 "2025-11-28": { type: "phase3", info: "FASE 3 (US)<br>50% + 10%/20% Extra", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In, Collabs & Accessories)", status: "TUDO FINAL SALE. Descontos extra aplicados via cupom (SUPER10/SUPER20) ou reloginho (timer).", disclaimer: "50% off sitewide with an extra 10% off using SUPER10 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative. 50% off sitewide with an extra 20% off using SUPER20 valid on U.S. online orders for a limited time. All sales are final and cannot be returned. Coupons are noncumulative." },
@@ -999,7 +1038,7 @@
                  "2025-11-25": { type: "phase2", info: "FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale (Spring, High, Fall baixo) + Fall", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
                  "2025-11-26": { type: "phase2", info: "FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale + Fall", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
                  "2025-11-27": { type: "phase2", info: "FASE 2 (EU/UK)<br>40% Super Sale + 30% Full Price", dotColor: "bg-orange-500", textColor: "text-orange-600 dark:text-orange-400", itens: "Sale + Fall", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off sale styles valid on E.U. online orders for a limited time. 30% off Fall styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off sale styles valid on U.K. online orders for a limited time. 30% off Fall styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
-                 "2025-11-28": { type: "phase3", info: "FASE 3 (EU/UK)<br>40% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In...)", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
+                 "2025-11-28": { type: "phase3", info: "FASE 3 (EU/UK)<br>40% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo (Exceções: New In...)", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
                  "2025-11-29": { type: "phase3", info: "FASE 3 (EU/UK)<br>40% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
                  "2025-11-30": { type: "phase3", info: "FASE 3 (EU/UK)<br>40% OFF SITEWIDE", dotColor: "bg-blue-600", textColor: "text-blue-600 dark:text-blue-400", itens: "Site todo", status: "NÃO HÁ FINAL SALE", disclaimer: "40% off selected styles valid on E.U. online orders for a limited time. Coupons are noncumulative. 40% off selected styles valid on U.K. online orders for a limited time. Coupons are noncumulative." },
             }
@@ -1030,10 +1069,7 @@
                 if (data) {
                     // Dia com evento
                     html += `
-                    <div data-date="${dateStr}" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50 transition-colors duration-150"
-                         data-itens="${data.itens}"
-                         data-status="${data.status}"
-                         data-disclaimer="${data.disclaimer}">
+                    <div data-date="${dateStr}" class="calendar-day bg-white border dark:bg-slate-800 p-1 rounded h-32 cursor-pointer hover:bg-slate-50 transition-colors duration-150">
                         <span class="font-bold text-slate-700 dark:text-slate-200 text-sm">${dayNum}</span>
                         <div class="h-2 w-2 rounded-full ${data.dotColor} mx-auto mt-1"></div>
                         <div class="promo-info mt-1 text-xs font-bold ${data.textColor} text-left leading-tight">${data.info}</div>
@@ -1135,19 +1171,25 @@
         
         function updateHighlightBox(date, dayCell) { 
              const formattedDate = date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-            let promoTitleHtml = "";
-            const promoEl = dayCell.querySelector('.promo-info');
-            if (promoEl) { promoTitleHtml = promoEl.innerHTML.replace(/<br>/g, ' | '); }
-            const itens = dayCell.dataset.itens;
-            const status = dayCell.dataset.status;
-            const disclaimer = dayCell.dataset.disclaimer;
-            let detailsHtml = '';
-            const avisoLink = `<p class="text-xs text-amber-600 dark:text-amber-400 mt-3 pt-3 border-t border-blue-200 dark:border-slate-700"><strong>Aviso:</strong> A informação pode mudar. Consulte sempre o <a href="https://somagrupo-my.sharepoint.com/:p:/g/personal/juliana_lima_farmrio_com/IQAL7htYeh56SaevsKr2Rcc4AVO9BBTItSgfOSTirarqc4E?e=TljRQt" target="_blank" rel="noopener noreferrer" class="font-bold underline hover:text-amber-700 dark:hover:text-amber-300">documento online</a>.</p>`;
-            if (itens) {
-                const statusClass = status.includes("FINAL SALE") && !status.includes("NÃO") ? "text-red-600 dark:text-red-400 font-bold" : "text-green-600 dark:text-green-400 font-bold";
-                detailsHtml = `<div class="space-y-2 text-sm text-blue-900 dark:text-blue-100"><p><strong class="text-blue-900/70 dark:text-blue-200/70">Itens:</strong> ${itens}</p><p><strong class="text-blue-900/70 dark:text-blue-200/70">Status:</strong> <span class="${statusClass}">${status}</span></p><p class="text-xs italic"><strong class="text-blue-900/70 dark:text-blue-200/70">Disclaimer:</strong> ${disclaimer}</p></div>${avisoLink}`;
-            } else { detailsHtml = `<span class="text-sm text-blue-800 dark:text-blue-200">Sem promoção principal neste dia.</span>${avisoLink}`; }
-            todayHighlightBox.innerHTML = `<h4 class="font-bold text-lg text-blue-900 dark:text-white capitalize">${formattedDate}</h4><p class="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-3">${promoTitleHtml}</p>${detailsHtml}`;
+            
+            // Lógica para buscar dados no objeto global calendarData em vez do DOM
+            // Isso evita problemas com HTML complexo dentro de atributos data-
+            const dateStr = dayCell.dataset.date;
+            const isUS = !document.getElementById('calendarUS').classList.contains('hidden');
+            const marketData = isUS ? calendarData.us : calendarData.eu;
+            const data = marketData[dateStr];
+
+            if (data) {
+                const promoTitleHtml = data.info.replace(/<br>/g, ' | ');
+                const statusClass = data.status.includes("FINAL SALE") && !data.status.includes("NÃO") ? "text-red-600 dark:text-red-400 font-bold" : "text-green-600 dark:text-green-400 font-bold";
+                
+                const detailsHtml = `<div class="space-y-2 text-sm text-blue-900 dark:text-blue-100"><p><strong class="text-blue-900/70 dark:text-blue-200/70">Itens:</strong> ${data.itens}</p><p><strong class="text-blue-900/70 dark:text-blue-200/70">Status:</strong> <span class="${statusClass}">${data.status}</span></p><p class="text-xs italic"><strong class="text-blue-900/70 dark:text-blue-200/70">Disclaimer:</strong> ${data.disclaimer}</p></div><p class="text-xs text-amber-600 dark:text-amber-400 mt-3 pt-3 border-t border-blue-200 dark:border-slate-700"><strong>Aviso:</strong> A informação pode mudar. Consulte sempre o <a href="https://somagrupo-my.sharepoint.com/:p:/g/personal/juliana_lima_farmrio_com/IQAL7htYeh56SaevsKr2Rcc4AVO9BBTItSgfOSTirarqc4E?e=TljRQt" target="_blank" rel="noopener noreferrer" class="font-bold underline hover:text-amber-700 dark:hover:text-amber-300">documento online</a>.</p>`;
+                
+                todayHighlightBox.innerHTML = `<h4 class="font-bold text-lg text-blue-900 dark:text-white capitalize">${formattedDate}</h4><p class="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-3">${promoTitleHtml}</p>${detailsHtml}`;
+            } else { 
+                const detailsHtml = `<span class="text-sm text-blue-800 dark:text-blue-200">Sem promoção principal neste dia.</span><p class="text-xs text-amber-600 dark:text-amber-400 mt-3 pt-3 border-t border-blue-200 dark:border-slate-700"><strong>Aviso:</strong> A informação pode mudar. Consulte sempre o <a href="https://somagrupo-my.sharepoint.com/:p:/g/personal/juliana_lima_farmrio_com/IQAL7htYeh56SaevsKr2Rcc4AVO9BBTItSgfOSTirarqc4E?e=TljRQt" target="_blank" rel="noopener noreferrer" class="font-bold underline hover:text-amber-700 dark:hover:text-amber-300">documento online</a>.</p>`;
+                todayHighlightBox.innerHTML = `<h4 class="font-bold text-lg text-blue-900 dark:text-white capitalize">${formattedDate}</h4>${detailsHtml}`; 
+            }
         }
         
         function showTodayHighlight(marketToShow) {
